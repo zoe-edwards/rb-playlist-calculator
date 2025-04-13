@@ -10,6 +10,9 @@ const errors = ref<any[]>([])
 type Playlist = {
   name: string
   trackIds: string[]
+  totalPlaytime: number
+  totalSettime: number
+  averageTrackPlaytimeSeconds: number
 }
 
 const parseXml = (xmlDoc: XMLDocument) => {
@@ -81,13 +84,13 @@ const totalSettimeSeconds = (trackIds: string[]): number => {
     // Take sixteenBarsInSeconds off start and end
     trackInSeconds = trackInSeconds - (sixteenBarsInSeconds * 2)
 
-    seconds = seconds + parseInt(trackInSeconds)
+    seconds = seconds + trackInSeconds
     // TotalTime, AverageBpm, Tonality
   })
   return seconds
 }
 
-const parsePlaylistNodes = (playlistsElement) => {
+const parsePlaylistNodes = (playlistsElement: Element) => {
   const playlists: Playlist[] = []
 
   function traverseNodes(node: Element): void {
@@ -221,7 +224,7 @@ const secondsToHours = (seconds: number) => {
         <td class="time">{{ secondsToMinutes(playlist.averageTrackPlaytimeSeconds) }}</td>
         <td class="time">{{ secondsToHours(playlist.totalPlaytime) }}</td>
         <td class="time">{{ secondsToHours(playlist.totalSettime) }}</td>
-        <td class="time">{{ parseInt((playlist.totalSettime / playlist.totalPlaytime) * 100) }}%</td>
+        <td class="time">{{ Math.round((playlist.totalSettime / playlist.totalPlaytime) * 100) }}%</td>
       </tr>
     </tbody>
   </table>
